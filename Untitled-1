@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<title>Add multiple markers</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.8.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.8.0/mapbox-gl.css' rel='stylesheet' />
+<style>
+            body { margin:0px; padding:0px; }
+            #map { position:absolute; top:0px; bottom:0px; width:100%; }
+        </style>
+</head>
+<body>
+<style>
+            .marker {
+                display: block;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                padding: 0;
+            }
+            
+        </style>
+<div id='map'></div>
+<script>
+            //Add your LocationIQ Maps Access Token here (not the API token!)
+            locationiqKey = 'pk.a5c3fbf2119bfb2275b62eddbccd76b3';
+            //Define the map and configure the map's theme
+            var map = new mapboxgl.Map({
+                container: 'map',
+                attributionControl: false, //need this to show a compact attribution icon (i) instead of the whole text
+                style: 'https://tiles.locationiq.com/v2/streets/vector.json?key='+locationiqKey,
+                zoom: 12,
+                center: [-122.42, 37.779]
+            });
+
+            //Add markers from geojson. This list can be generated dynamically with an AJAX call as well.
+            var geojson = {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "message": "Foo",
+                            "iconSize": [60, 60]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.421953,
+                                37.764966
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "message": "Bar",
+                            "iconSize": [50, 50]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.464677,
+                                37.777209
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "message": "Baz",
+                            "iconSize": [40, 40]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.484948,
+                                37.780090
+                            ]
+                        }
+                    }
+                ]
+            };
+
+            //Add markers to map
+            //https://www.mapbox.com/mapbox-gl-js/api#marker
+            geojson.features.forEach(function(marker) {
+                // create a DOM element for the marker
+                var el = document.createElement('div');
+                el.className = 'marker';
+                el.style.backgroundImage = 'url(marker50px.png)';
+                el.style.width = '50px';
+                el.style.height = '50px';
+
+                //Instead of this click listener, we can attach a popup / infowindow to this marker (see next section)
+                el.addEventListener('click', function() {
+                    window.alert(marker.properties.message);
+                });
+
+                // add marker to map
+                new mapboxgl.Marker(el)
+                    .setLngLat(marker.geometry.coordinates)
+                    .addTo(map);
+            });
+
+        </script>
+</body>
+</html>
